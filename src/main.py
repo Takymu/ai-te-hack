@@ -1,5 +1,4 @@
 from pdftotext import extract_text_from_pdf
-from comixgen import generate_comix
 from scenparser import parse_scenario
 from diffusion import generate_image
 
@@ -8,7 +7,7 @@ from yolo_detect import detect_faces
 from addovals import add_speech_bubble
 from imgcombine import combine_images_to_file
 
-doctext = extract_text_from_pdf('../data/Памятка ОБРАЩЕНИЯ ГРАЖДАН в прокуратуру.pdf')
+doctext = extract_text_from_pdf('../data/_Уведомление_об_отказе_в_приеме_и_регистрации_заявления_ВУ-20250923-13521150876-1-1.pdf')
 
 GENERATE_SCENARIO = True
 
@@ -58,13 +57,13 @@ for i in range(len(scenario['scenes'])):
     for x, y in faces:
         if left and charLaction is not None:
             img = add_speech_bubble(img, charLaction, x, y,
-                               max_bubble_width=200,
-                                 min_font_size=6)
+                               max_bubble_width=280,
+                                 min_font_size=8)
             left = False
         elif charRaction is not None:
             img = add_speech_bubble(img, charRaction, x, y,
-                               max_bubble_width=200,
-                                 min_font_size=6)
+                               max_bubble_width=280,
+                                 min_font_size=8)
     scenelist.append(img)
 
 
