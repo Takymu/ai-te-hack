@@ -40,7 +40,7 @@ def parse_scenario(text: str) -> Dict:
     
     charR_dialogues = re.findall(patterns['charR_dialogue'], text, re.DOTALL)
     result['charRaction'] = [
-        dialogue.strip() if dialogue.strip() else None 
+        dialogue.strip() if dialogue.strip() and dialogue.strip() != '[placeholder]' else None 
         for dialogue in charR_dialogues
     ]
     
