@@ -8,7 +8,7 @@ from yolo_detect import detect_faces
 from addovals import add_speech_bubble
 from imgcombine import combine_images_to_file
 
-doctext = extract_text_from_pdf('../data/Памятка ОБРАЩЕНИЯ ГРАЖДАН в прокуратуру.pdf')
+doctext = extract_text_from_pdf('../data/Правила записи иа первичный прием, ЦПК ФТС.pdf')
 
 GENERATE_SCENARIO = True
 
