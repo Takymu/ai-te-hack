@@ -1,0 +1,78 @@
+Отлично, я готов приступить к созданию комикса по вашему документу. Я придумал историю о двух друзьях, один из которых столкнулся с проблемой и учится правильно подавать обращение в органы власти.
+
+**План сюжета:**
+1. **Завязка:** Иван рассказывает Анне о проблеме с вывозом мусора во дворе и своем безуспешном устном обращении.
+2. **Развитие действия:** Анна, как более опытная подруга, объясняет Ивану основы права на обращение (Конституция, ФЗ-59), виды обращений (предложение, заявление, жалоба) и ключевые права гражданина.
+3. **Кульминация:** Они вместе пишут правильное письменное обращение, уделяя внимание всем обязательным реквизитам (адресат, ФИО, адрес, подпись, суть проблемы).
+4. **Развязка:** Иван получает положительный ответ из администрации, проблема решается. Анна напоминает о сроках и ответственности чиновников за нарушение порядка рассмотрения.
+
+---
+
+[charLdescStart]
+A young man in his late 20s, named Ivan. He has short, slightly messy brown hair, wears a simple t-shirt and jeans. He looks confused and a bit frustrated at first, then engaged and happy.
+[charLdecEnd]
+
+[charRdescStart]
+A young woman in her late 20s, named Anna. She has neat blonde hair tied in a ponytail, wears glasses and a smart casual blouse. She 
+looks knowledgeable, friendly, and helpful.
+[charRdescEnd]
+
+***
+
+[scene]
+Ivan and Anna are sitting on a bench in a messy urban park. Ivan is pointing towards a pile of uncollected garbage bags near a playground. He looks upset.
+[endscene]
+[charL]
+Смотри, какой кошмар! Уже третью неделю этот мусор не вывозят. Я дворнику жаловался – бесполезно.
+[charLend]
+[charR]
+Ну, устно – это часто мимо кассы. Ты же гражданин, у тебя есть право на официальное обращение! По Конституции!
+[charRend]
+
+***
+
+[scene]
+Anna pulls out her tablet. Ivan leans in to look at the screen. The tablet shows a simplified diagram of the law.
+[endscene]
+[charL]
+И что, просто написать и всё решат? Сомневаюсь.
+[charLend]
+[charR]
+Есть закон ФЗ-59! Ты можешь подать предложение, заявление или жалобу. И они обязаны ответить тебе письменно по сути!
+[charRend]
+
+***
+
+[scene]
+Close-up on the tablet screen. Anna's finger points to a bulleted list titled "Права гражданина".
+[endscene]
+[charL]
+[placeholder]
+[charLend]
+[charR]
+Ты можешь прикладывать документы, знакомиться с материалами по своему делу и даже обжаловать их ответ, если что!
+[charRend]
+
+***
+
+[scene]
+Ivan and Anna are at a kitchen table. Ivan is writing on a piece of paper. Anna is guiding him.
+[endscene]
+[charL]
+Так... Пишу: «В администрацию Троснянского района от Иванова Ивана...» А что дальше?
+[charLend]
+[charR]
+Обязательно укажи свой почтовый адрес для ответа! И четко изложи суть: «Прошу обеспечить вывоз мусора со двора по адресу...». И подпись!
+[charRend]
+
+***
+
+[scene]
+Ivan is holding a printed letter with an official stamp. He has a big smile on his face. Anna stands next to him, smiling.
+[endscene]
+[charL]
+Ура! Пришел ответ! Мусор вывезли! И из администрации письмо, что моё обращение рассмотрено и приняты меры!
+[charLend]
+[charR]
+Видишь? А ведь у них всего 30 дней на ответ был. Если бы проигнорировали – им бы штраф до 10 тысяч рублей!
+[charRend]
