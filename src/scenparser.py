@@ -12,7 +12,7 @@ def parse_scenario(text: str) -> Dict:
     }
     
     patterns = {
-        'charL_desc': r'\[charLdescStart\](.*?)\[charLdecEnd\]',
+        'charL_desc': r'\[charLdescStart\](.*?)\[charLdescEnd\]',
         'charR_desc': r'\[charRdescStart\](.*?)\[charRdescEnd\]',
         'scene': r'\[scene\](.*?)\[endscene\]',
         'charL_dialogue': r'\[charL\](.*?)\[charLend\]',

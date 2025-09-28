@@ -3,7 +3,7 @@ import numpy as np
 from ultralytics import YOLO
 
 def detect_faces(image_bytes):
-    model = YOLO('../weights/yolov8x6_animeface.pt')
+    model = YOLO('../yolov8x6_animeface.pt')
 
     nparr = np.frombuffer(image_bytes, np.uint8)
     image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
