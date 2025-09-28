@@ -22,7 +22,7 @@ class ComicGenerationSystem:
 
         self.client = OpenAI(
             base_url="https://openrouter.ai/api/v1",
-            api_key="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",
+            api_key="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",
         )
         
         self.actor_prompt_template = scenario_prompt
