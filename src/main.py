@@ -4,7 +4,7 @@ from scenparser import parse_scenario
 from diffusion import generate_image
 
 from actor_critic import generate_comix_actcrit
-from facedetect import detect_faces
+from yolo_detect import detect_faces
 from addovals import add_speech_bubble
 from imgcombine import combine_images_to_file
 

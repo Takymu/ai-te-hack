@@ -20,9 +20,13 @@ class ComicGenerationSystem:
     def __init__(self, config: GenerationConfig):
         self.config = config
 
+        api_key = None
+        with open('.env', 'r') as f:
+            api_key = f.read()
+
         self.client = OpenAI(
             base_url="https://openrouter.ai/api/v1",
-            api_key="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",
+            api_key=api_key,
         )
         
         self.actor_prompt_template = scenario_prompt
@@ -36,7 +40,7 @@ class ComicGenerationSystem:
                         6. Проверь что во фразах персонажей нет никакого лишнего форматирования (фразы сразу пойдут в комикс напрямую)
                         Ни в коем случае не трогай теги в квадратных скобках, 
                         это ключевые слова для парсинга! Не делай по ним никаких замечаний.
-                        
+                        Особенно не трогай тег [placeholder]
                         Комикс:
                         {comic}
                     """
