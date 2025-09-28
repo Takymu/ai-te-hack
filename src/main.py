@@ -1,6 +1,7 @@
 from pdftotext import extract_text_from_pdf
 from scenparser import parse_scenario
-from diffusion import generate_image
+# from diffusion import generate_image
+from gigachat import generate_image
 
 from actor_critic import generate_comix_actcrit
 from yolo_detect import detect_faces
@@ -33,9 +34,10 @@ for i in range(len(scenario['scenes'])):
 
     sceneprompt = f'''
         {scenedesc}
-        It's a part of comic book with characters in the comix style, draw full-length characters.
-        The characters should be cartoony, 2D, suitable for a comic, and not overly complex and not overly expressive.
-    '''
+        '''
+    #!     It's a part of comic book with characters in the comix style, draw full-length characters.
+    #!     The characters should be cartoony, 2D, suitable for a comic, and not overly complex and not overly expressive.
+    #! '''
     if charLaction is not None:
         sceneprompt += 'Appearance of left character:\n' + charLdesc + '\n'
     
