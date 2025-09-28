@@ -29,7 +29,7 @@ class FusionBrainAPI:
             "numImages": images,
             "width": width,
             "height": height,
-            "style": "ANIME",
+            "style": "DIGITAL ART",
             "generateParams": {
                 "query": promt
             }
@@ -71,8 +71,6 @@ class FusionBrainAPI:
 if __name__ == '__main__':
 
     promt = """Ivan on the left and Anna on the right are sitting on a bench in a messy urban park. Ivan is pointing towards a pile of uncollected garbage bags near a playground. He looks upset.
-        It's a part of comic book with characters in the comix style, draw full-length characters.
-        The characters should be cartoony, 2D, suitable for a comic, and not overly complex and not overly expressive.
     Appearance of left character:
 A young man in his late 20s, named Ivan. He has short, slightly messy brown hair, wears a simple t-shirt and jeans. He looks confused and a bit frustrated at first, then engaged and happy.
 Appearance of right character:

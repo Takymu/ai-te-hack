@@ -108,7 +108,7 @@ def main():
     detector = AnimeFaceDetector()
     
     # Путь к вашему изображению
-    image_path = "/home/ilya/Documents/ai-te-hack/1.jpg"  # Замените на ваш путь
+    image_path = "/home/ilya/Documents/ai-te-hack/my_image_0.png"  # Замените на ваш путь
     
     try:
         # Детекция лиц
