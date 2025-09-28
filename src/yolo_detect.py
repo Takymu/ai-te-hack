@@ -7,47 +7,23 @@ from huggingface_hub import hf_hub_download
 
 class AnimeFaceDetector:
     def __init__(self, model_path=None):
-        """
-        Инициализация детектора
-        
-        Args:
-            model_path: путь к предобученной модели YOLO для лиц
-                      если None, будет использована стандартная YOLOv8
-        """
-        # model_path = hf_hub_download(repo_id="arnabdhar/YOLOv8-Face-Detection", filename="model.pt")
-
-        # load model
         self.model = YOLO('/home/ilya/Documents/ai-te-hack/yolov8x6_animeface.pt')
     
     def detect_faces(self, image_path, conf_threshold=0.5):
-        """
-        Детекция лиц на изображении
-        
-        Args:
-            image_path: путь к изображению
-            conf_threshold: порог уверенности
-            
-        Returns:
-            dict: результаты детекции с координатами боксов
-        """
-        # Загрузка и обработка изображения
         image = cv2.imread(image_path)
         if image is None:
             raise ValueError(f"Не удалось загрузить изображение: {image_path}")
         
-        # Конвертация BGR to RGB
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        
-        # Детекция с помощью YOLO
+    
         results = self.model(image_rgb, conf=conf_threshold)
-        
-        # Извлечение результатов
+    
         detections = []
         for result in results:
             boxes = result.boxes
             if boxes is not None:
                 for box in boxes:
-                    # Координаты бокса [x1, y1, x2, y2]
+    
                     coords = box.xyxy[0].cpu().numpy()
                     confidence = box.conf[0].cpu().numpy()
                     
@@ -70,14 +46,6 @@ class AnimeFaceDetector:
         }
     
     def visualize_detections(self, image_path, output_path, detections=None):
-        """
-        Визуализация результатов детекции
-        
-        Args:
-            image_path: путь к исходному изображению
-            output_path: путь для сохранения результата
-            detections: результаты детекции (если None, выполняется детекция)
-        """
         if detections is None:
             detections = self.detect_faces(image_path)
         
@@ -87,34 +55,29 @@ class AnimeFaceDetector:
             bbox = detection['bbox']
             confidence = detection['confidence']
             
-            # Рисуем прямоугольник
+            
             start_point = (int(bbox['x1']), int(bbox['y1']))
             end_point = (int(bbox['x2']), int(bbox['y2']))
             
             cv2.rectangle(image, start_point, end_point, (0, 255, 0), 2)
             
-            # Добавляем текст с уверенностью
+    
             text = f"Face: {confidence:.2f}"
             cv2.putText(image, text, 
                        (int(bbox['x1']), int(bbox['y1'])-10),
                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         
-        # Сохраняем результат
+
         cv2.imwrite(output_path, image)
         print(f"Результат сохранен в: {output_path}")
 
 def main():
-    # Инициализация детектора
     detector = AnimeFaceDetector()
-    
-    # Путь к вашему изображению
-    image_path = "/home/ilya/Documents/ai-te-hack/my_image_0.png"  # Замените на ваш путь
+    image_path = "/home/ilya/Documents/ai-te-hack/my_image_0.png"
     
     try:
-        # Детекция лиц
         results = detector.detect_faces(image_path, conf_threshold=0.5)
-        
-        # Вывод результатов
+
         print("=" * 50)
         print(f"РЕЗУЛЬТАТЫ ДЕТЕКЦИИ:")
         print(f"Изображение: {results['image_path']}")
@@ -130,12 +93,10 @@ def main():
             print(f"  Уверенность: {confidence:.3f}")
             print("-" * 30)
         
-        # Сохранение результатов в JSON
         with open('detection_results.json', 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
         print("Результаты сохранены в detection_results.json")
         
-        # Визуализация результатов
         detector.visualize_detections(image_path, "detection_result.jpg", results)
         
     except Exception as e:
