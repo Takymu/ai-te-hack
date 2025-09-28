@@ -52,7 +52,7 @@ class ComicGenerationSystem:
                         [charRend]
                         Ни в коем случае не проси удалить теги в квадратных скобках, 
                         это ключевые слова для парсинга!
-                        Особенно не трогай тег [placeholder]
+                        Особенно не трогай теги [placeholder], [charLdescStart], [charLdescEnd], [charRdescStart], [charRdescEnd]
                         Комикс:
                         {comic}
                     """
