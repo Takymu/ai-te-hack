@@ -1,9 +1,12 @@
 import cv2
 import numpy as np
 from ultralytics import YOLO
+import os
 
 def detect_faces(image_bytes):
-    model = YOLO('../weights/yolov8x6_animeface.pt')
+    current_dir = os.path.dirname(__file__)
+    weights_path = os.path.abspath(os.path.join(current_dir, '..', 'yolov8x6_animeface.pt'))
+    model = YOLO(weights_path)
 
     nparr = np.frombuffer(image_bytes, np.uint8)
     image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)

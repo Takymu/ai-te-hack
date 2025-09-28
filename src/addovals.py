@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 import math
 import io
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
-
 def add_speech_bubble(
     image_bytes: bytes,
     text: str,
