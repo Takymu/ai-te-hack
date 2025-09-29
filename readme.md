@@ -12,4 +12,6 @@ You can use Document2Comix in the [telegram bot](https://t.me/docs_to_comics_bot
 
 [Document](./data/Правила%20записи%20иа%20первичный%20прием,%20ЦПК%20ФТС.pdf)
 
-<img src="./src/comix.jpg" width="50%" alt="comix">
+<div align="center">
+  <img src="./src/comix.jpg" width="75%" alt="comix">
+</div>
