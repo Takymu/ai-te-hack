@@ -29,32 +29,14 @@ def generate_comic_from_pdf(pdf_path: str, output_path: Optional[str] = None) ->
     # Извлечение текста
     doctext = extract_text_from_pdf(pdf_path)
 
-    # Генерация сценария (актор-критик) с фолбэком на локальный пример при ошибке авторизации/сети
-    try:
-        scenario_text = generate_comix_actcrit(doctext)
-    except Exception as e:
-        print(f"[pipeline] Не удалось сгенерировать сценарий через LLM: {e}")
-        # Фолбэк на локальный пример
-        fallback_path = os.path.join(os.path.dirname(__file__), 'scenariopamatka.txt')
-        if os.path.isfile(fallback_path):
-            with open(fallback_path, 'r', encoding='utf-8') as f:
-                scenario_text = f.read()
-            print("[pipeline] Использую локальный сценарий из scenariopamatka.txt")
-        else:
-            raise
+    # Генерация сценария (актор-критик) — без локальных фолбэков
+    scenario_text = generate_comix_actcrit(doctext)
 
     # Парсинг сценария на сцены и реплики
     scenario = parse_scenario(scenario_text)
-    # Валидация: если сцен нет (LLM вернул мета-текст/критика), используем локальный фолбэк
+    # Валидация: если сцен нет — сообщаем об ошибке вызвавшей стороне (бот пошлёт дружелюбное сообщение)
     if not scenario.get('scenes'):
-        print("[pipeline] Сцен после парсинга нет. Перехожу на локальный сценариопамятку.")
-        fallback_path = os.path.join(os.path.dirname(__file__), 'scenariopamatka.txt')
-        if os.path.isfile(fallback_path):
-            with open(fallback_path, 'r', encoding='utf-8') as f:
-                scenario_text = f.read()
-            scenario = parse_scenario(scenario_text)
-        else:
-            raise RuntimeError("Сценарий пуст и отсутствует локальный фолбэк scenariopamatka.txt")
+        raise RuntimeError("Сценарий пуст: парсер не нашёл ни одной сцены")
 
     charLdesc = scenario['charLdesc'][0] if scenario['charLdesc'] else None
     charRdesc = scenario['charRdesc'][0] if scenario['charRdesc'] else None
