@@ -45,16 +45,36 @@ def generate_comic_from_pdf(pdf_path: str, output_path: Optional[str] = None) ->
 
     # Парсинг сценария на сцены и реплики
     scenario = parse_scenario(scenario_text)
+    # Валидация: если сцен нет (LLM вернул мета-текст/критика), используем локальный фолбэк
+    if not scenario.get('scenes'):
+        print("[pipeline] Сцен после парсинга нет. Перехожу на локальный сценариопамятку.")
+        fallback_path = os.path.join(os.path.dirname(__file__), 'scenariopamatka.txt')
+        if os.path.isfile(fallback_path):
+            with open(fallback_path, 'r', encoding='utf-8') as f:
+                scenario_text = f.read()
+            scenario = parse_scenario(scenario_text)
+        else:
+            raise RuntimeError("Сценарий пуст и отсутствует локальный фолбэк scenariopamatka.txt")
 
     charLdesc = scenario['charLdesc'][0] if scenario['charLdesc'] else None
     charRdesc = scenario['charRdesc'][0] if scenario['charRdesc'] else None
 
     scenelist: list[bytes] = []
 
+    def _sanitize_dialogue(s: Optional[str]) -> Optional[str]:
+        if s is None:
+            return None
+        # remove simple markdown emphasis to avoid **bold** etc.
+        for token in ("**", "*", "__", "_"):
+            s = s.replace(token, "")
+        return s.strip()
+
     for i in range(len(scenario['scenes'])):
         scenedesc = scenario['scenes'][i]
         charLaction = scenario['charLaction'][i] if i < len(scenario['charLaction']) else None
         charRaction = scenario['charRaction'][i] if i < len(scenario['charRaction']) else None
+        charLaction = _sanitize_dialogue(charLaction)
+        charRaction = _sanitize_dialogue(charRaction)
 
         sceneprompt = f"""
 {scenedesc}
@@ -69,8 +89,12 @@ The characters should be cartoony, 2D, suitable for a comic, and not overly comp
 
         sceneprompt += 'location is absent of people'
 
-        # Генерация изображения сцены
-        img_bytes, _ext = generate_image(sceneprompt)
+        # Генерация изображения сцены с перехватом ошибок (фиксированный размер для стабильной вёрстки)
+        try:
+            img_bytes, _ext = generate_image(sceneprompt, width=832, height=512)
+        except Exception as e:
+            print(f"[pipeline] Не удалось сгенерировать сцену {i+1}: {e}")
+            continue
 
         # Детекция лиц и добавление "облачков" с репликами
         faces = detect_faces(img_bytes)
@@ -108,6 +132,9 @@ The characters should be cartoony, 2D, suitable for a comic, and not overly comp
     if output_path is None:
         tmpdir = tempfile.mkdtemp(prefix="comix_")
         output_path = os.path.join(tmpdir, "comic.png")
+
+    if not scenelist:
+        raise RuntimeError("Не удалось сгенерировать ни одной сцены комикса. Попробуйте ещё раз или другой документ.")
 
     combine_images_to_file(scenelist, output_path)
     return output_path
