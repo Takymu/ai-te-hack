@@ -8,6 +8,10 @@ from dotenv import load_dotenv, find_dotenv
 from PIL import Image
 
 from .pipeline import generate_comic_from_pdf
+try:
+    from openai import AuthenticationError, RateLimitError, NotFoundError
+except Exception:
+    AuthenticationError = RateLimitError = NotFoundError = Exception
 
 
 def get_bot() -> telebot.TeleBot:
@@ -52,7 +56,7 @@ def _prepare_image_for_telegram(png_path: str) -> str:
 def send_welcome(message):
     bot.reply_to(
         message,
-        "Отправьте PDF-файл с документом. Я верну сгенерированный комикс в PNG."
+        "Приветствую Вас! Отправьте PDF-файл с документом. Я верну сгенерированный комикс в PNG."
     )
 
 
@@ -72,7 +76,7 @@ def handle_document(message):
             tmp_pdf.write(downloaded)
             tmp_pdf_path = tmp_pdf.name
 
-        bot.reply_to(message, "Документ получен. Начинаю генерацию комикса, это может занять несколько минут...")
+        bot.reply_to(message, "Документ получен. Начинаю генерацию комикса, это может занять несколько минут, наберитесь терпения, пожалуйста...")
 
         # Генерация комикса
         output_path = generate_comic_from_pdf(tmp_pdf_path)
@@ -100,8 +104,36 @@ def handle_document(message):
             raise last_err
 
     except Exception as e:
+        # Логи для разработчика
         traceback.print_exc()
-        bot.reply_to(message, f"Ошибка при обработке: {e}")
+
+        # Специальные сообщения для частых кодов ошибок OpenRouter/OpenAI
+        if isinstance(e, NotFoundError) or 'Error code: 404' in str(e):
+            bot.reply_to(
+                message,
+                "Упс, что-то пошло не так. Возможно, Ваш документ слишком большой, к сожалению, нам не удаётся создать по нему комикс."
+            )
+            return
+
+        if isinstance(e, RateLimitError) or 'Error code: 429' in str(e):
+            bot.reply_to(
+                message,
+                "Упс, на сегодня количество бесплатных генераций комиксов исчерпано, попробуйте загрузить Ваш документ завтра."
+            )
+            return
+
+        if isinstance(e, AuthenticationError) or 'Error code: 401' in str(e):
+            bot.reply_to(
+                message,
+                "Упс, у сервиса временные неприятности, попробуйте обратиться к нам с Вашим документом позже."
+            )
+            return
+
+        # Общее сообщение по умолчанию
+        bot.reply_to(
+            message,
+            "Упс, что-то пошло не так. Возможно, Ваш документ слишком большой, к сожалению, нам не удаётся создать по нему комикс."
+        )
 
 
 if __name__ == '__main__':
