@@ -1,15 +1,27 @@
 from openai import OpenAI
-
-from promptscenario import scenario_prompt
+import os
+from .promptscenario import scenario_prompt
 
 def generate_comix(doctext):
+    try:
+        load_dotenv(find_dotenv())
+    except Exception:
+        pass
+
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    if not api_key:
+        raise RuntimeError("OPENROUTER_API_KEY не найден в окружении/.env")
+
     client = OpenAI(
         base_url="https://openrouter.ai/api/v1",
-        api_key="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",
+        api_key=api_key,
     )
 
     completion = client.chat.completions.create(
-        extra_headers={},
+        extra_headers={
+            "HTTP-Referer": "http://localhost",
+            "X-Title": "ai-te-hack-telegram-bot",
+        },
         extra_body={},
         model="deepseek/deepseek-chat-v3.1:free",
         messages=[

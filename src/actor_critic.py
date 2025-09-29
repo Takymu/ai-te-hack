@@ -1,7 +1,7 @@
 # import ollama
 from openai import OpenAI
 from dataclasses import dataclass
-from promptscenario import scenario_prompt
+from .promptscenario import scenario_prompt
 # LLM_MODEL = 'llama3:8b' 
 
 
@@ -15,23 +15,36 @@ class GenerationConfig:
     min_comic_length: int = 0  # Минимальная длина комикса
 
 
-
 class ComicGenerationSystem:
     def __init__(self, config: GenerationConfig):
         self.config = config
+        import os
+        try:
+            from dotenv import load_dotenv, find_dotenv
+            load_dotenv(find_dotenv())
+        except Exception:
+            pass
 
-        api_key = None
-        with open('.env', 'r') as f:
-            api_key = f.read()
+        api_key = os.getenv("OPENROUTER_API_KEY")
+        if not api_key:
+            raise RuntimeError("OPENROUTER_API_KEY не найден в окружении/.env")
 
         self.client = OpenAI(
             base_url="https://openrouter.ai/api/v1",
             api_key=api_key,
         )
-        
+
+        # Рекомендуемые заголовки OpenRouter (для трекинга приложения)
+        self._extra_headers = {
+            "HTTP-Referer": "http://localhost",
+            "X-Title": "ai-te-hack-telegram-bot",
+        }
+
+        # Шаблоны промптов
         self.actor_prompt_template = scenario_prompt
 
-        self.critic_prompt_template = """Ты критик комиксов. Оцени качество следующего комикса по критериям:
+        self.critic_prompt_template = (
+            """Ты критик комиксов. Оцени качество следующего комикса по критериям:
                         1. Драматургия
                         2. Информативность
                         3. Общая читабельность
@@ -44,8 +57,10 @@ class ComicGenerationSystem:
                         Комикс:
                         {comic}
                     """
+        )
 
-        self.improvement_prompt = """
+        self.improvement_prompt = (
+            """
                         Предыдущий комикс:
                         {previous_comic}
 
@@ -54,6 +69,7 @@ class ComicGenerationSystem:
 
                         Переделай комикс, учитывая замечания критика:
                     """
+        )
 
     # LLM_MODEL = 'llama3:8b' 
 
@@ -69,7 +85,7 @@ class ComicGenerationSystem:
 
     def generate_text(self, promt):
         completion = self.client.chat.completions.create(
-            extra_headers={},
+            extra_headers=self._extra_headers,
             extra_body={},
             model="deepseek/deepseek-chat-v3.1:free",
             messages=[

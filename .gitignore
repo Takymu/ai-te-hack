@@ -1,1 +1,15 @@
 yolov8x6_animeface.pt
+*__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.pylint.d/
+.ruff_cache/
+.venv/
+venv/
+comic_venv/
+.idea/
+.vscode/
+.DS_Store
+.env

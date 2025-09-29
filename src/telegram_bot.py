@@ -1,0 +1,109 @@
+import os
+import tempfile
+import traceback
+import io
+
+import telebot
+from dotenv import load_dotenv, find_dotenv
+from PIL import Image
+
+from .pipeline import generate_comic_from_pdf
+
+
+def get_bot() -> telebot.TeleBot:
+    try:
+        load_dotenv(find_dotenv())
+    except Exception:
+        pass
+
+    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    if not token:
+        raise RuntimeError("Не задан TELEGRAM_BOT_TOKEN в .env или окружении")
+
+    bot = telebot.TeleBot(token, parse_mode=None)
+    return bot
+
+
+bot = get_bot()
+
+
+def _prepare_image_for_telegram(png_path: str) -> str:
+    """Конвертирует PNG в более лёгкий JPEG (и даунскейлит, если очень большое изображение).
+    Возвращает путь к временному JPEG-файлу. При ошибке возвращает исходный путь."""
+    try:
+        with Image.open(png_path) as im:
+            im = im.convert('RGB')
+            max_side = 2048
+            w, h = im.size
+            if max(w, h) > max_side:
+                scale = max_side / float(max(w, h))
+                im = im.resize((int(w*scale), int(h*scale)), Image.LANCZOS)
+
+            fd, tmp_jpg = tempfile.mkstemp(suffix='.jpg')
+            os.close(fd)
+            im.save(tmp_jpg, format='JPEG', quality=85, optimize=True)
+            return tmp_jpg
+    except Exception:
+        pass
+    return png_path
+
+
+@bot.message_handler(commands=['start', 'help'])
+def send_welcome(message):
+    bot.reply_to(
+        message,
+        "Отправьте PDF-файл с документом. Я верну сгенерированный комикс в PNG."
+    )
+
+
+@bot.message_handler(content_types=['document'])
+def handle_document(message):
+    try:
+        doc = message.document
+        if not doc.file_name.lower().endswith('.pdf'):
+            bot.reply_to(message, "Пожалуйста, отправьте файл в формате PDF.")
+            return
+
+        # Скачиваем PDF во временный файл
+        file_info = bot.get_file(doc.file_id)
+        downloaded = bot.download_file(file_info.file_path)
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_pdf:
+            tmp_pdf.write(downloaded)
+            tmp_pdf_path = tmp_pdf.name
+
+        bot.reply_to(message, "Документ получен. Начинаю генерацию комикса, это может занять несколько минут...")
+
+        # Генерация комикса
+        output_path = generate_comic_from_pdf(tmp_pdf_path)
+
+        # Подготовим файл к отправке (сжатие/даунскейл)
+        send_path = _prepare_image_for_telegram(output_path)
+
+        # Отправляем результат с увеличенным таймаутом и ретраями
+        attempts = 3
+        last_err = None
+        for _ in range(attempts):
+            try:
+                with open(send_path, 'rb') as f:
+                    bot.send_document(
+                        message.chat.id,
+                        f,
+                        visible_file_name=os.path.basename(send_path),
+                        timeout=300,
+                    )
+                last_err = None
+                break
+            except Exception as e:
+                last_err = e
+        if last_err:
+            raise last_err
+
+    except Exception as e:
+        traceback.print_exc()
+        bot.reply_to(message, f"Ошибка при обработке: {e}")
+
+
+if __name__ == '__main__':
+    print("Telegram bot is running. Press Ctrl+C to stop.")
+    bot.infinity_polling(skip_pending=True)
