@@ -2,8 +2,8 @@
 
 The project was implemented as part of the True Engineering hackathon. Case study: turn a document into a comix book while preserving its meaning. 
 
-### Realization
+## Realization
 We have implemented a **multi-agent** system that generates a scenario according to the "author-critic" scheme, and then transmits it to the diffusion model to generate images. To determine the coordinates of clouds with text, we use a face detector.
 
-### Inference
+## Inference
 You can use Document2Comix in the [telegram bot](https://t.me/docs_to_comics_bot).
